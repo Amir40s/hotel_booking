@@ -62,6 +62,8 @@ class AdminDashboardScreen extends StatelessWidget {
                       size: 14.0, isBold: true,),),
                     DataColumn(label: TextWidget(text: "Book for now /later", color:  Colors.black,
                       size: 14.0, isBold: true,),),
+                    DataColumn(label: TextWidget(text: "Book Date / Time", color:  Colors.black,
+                      size: 14.0, isBold: true,),),
                     DataColumn(label: TextWidget(text: "Car Type", color:  Colors.black,
                       size: 14.0, isBold: true,),),
                     DataColumn(label: TextWidget(text: "Driver Notes", color:  Colors.black,
@@ -83,6 +85,7 @@ class AdminDashboardScreen extends StatelessWidget {
       ],
     );
   }
+
 }
 
 class DataTableSourceImpl extends DataTableSource {
@@ -147,6 +150,11 @@ class DataTableSourceImpl extends DataTableSource {
         ),
 
         DataCell(
+          TextWidget(text: "${category[index]["bookDate"].toString()} -- ${category[index]["bookDate"].toString()}", color: Colors.black,
+            size: 14.0, isBold: false,),
+        ),
+
+        DataCell(
           TextWidget(text: category[index]["carType"].toString(), color: Colors.black,
             size: 14.0, isBold: false,),
         ),
@@ -163,65 +171,81 @@ class DataTableSourceImpl extends DataTableSource {
         ),
 
         DataCell(
-          InkWell(
-              onTap: (){
-                Get.bottomSheet(Container(
-                  width: Get.width,
-                  height: Get.height/2,
-                  padding: EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
-                    )
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20.0),
-                      Row(
-                        children: [
-                          TextWidget(text: "Customer Name: ", color: primaryColor, size: 18.0, isBold: true),
-                          TextWidget(text: category[index][key_name].toString(), color: primaryColor, size: 14.0, isBold: false),
-                        ],
+          Row(
+            children: [
+              InkWell(
+                  onTap: (){
+                    Get.bottomSheet(Container(
+                      width: Get.width,
+                      height: Get.height/2,
+                      padding: EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                        )
                       ),
-                      SizedBox(height: 20.0),
-                      CustomTextField(hintText: "Customer reply", controller: comtroller),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: Get.width * 0.010),
+                            Row(
+                              children: [
+                                TextWidget(text: "Customer Name: ", color: primaryColor, size: 18.0, isBold: true),
+                                TextWidget(text: category[index][key_name].toString(), color: primaryColor, size: 14.0, isBold: false),
+                              ],
+                            ),
+                            SizedBox(height: Get.width * 0.010),
+                            CustomTextField(hintText: "Customer reply", controller: comtroller),
+                        
+                            SizedBox(height: Get.width * 0.010),
+                            CustomTextField(hintText: "Driver Name", controller: nameController),
+                        
+                            SizedBox(height: Get.width * 0.010),
+                            CustomTextField(hintText: "Vehicle Number", controller: numController),
+                            SizedBox(height: Get.width * 0.010),
+                          Consumer<ValueProvider>(
+                          builder: (context,provider,child){
+                            return provider.isLoading == false ? ButtonWidget(text: "Send Reply", onClicked: (){
+                              provider.setLoading(true);
+                              var id =  category[index]["id"].toString();
+                              firestore.collection("reply").doc(id).set({
+                                "message" :  comtroller.text.toString(),
+                                "name" :  nameController.text.toString(),
+                                "number" :  numController.text.toString(),
+                                "date" :  category[index]["date"].toString(),
+                                "time" :  category[index]["time"].toString(),
+                              }).whenComplete(() {
+                                firestore.collection("requests").doc(id).update({
+                                  "status" : "complete"
+                                }).whenComplete(() {
+                                  Provider.of<ValueProvider>(context,listen: false).setLoading(false);
+                                  //  Get.snackbar("Message Deliver", "Message Send Successfully",backgroundColor: primaryColor,colorText: Colors.white);
+                                  Get.back();
+                                });
+                              });
+                            }, width: 200.0, height: 50.0)
+                            : ButtonLoadingWidget(width: 200.0, height: 50.0);
+                          },
+                          )
+                          ],
+                        ),
+                      ),
+                    ));
+                  },
+                  child: Icon(Icons.edit)),
 
-                      SizedBox(height: 20.0),
-                      CustomTextField(hintText: "Driver Name", controller: nameController),
 
-                      SizedBox(height: 20.0),
-                      CustomTextField(hintText: "Vehicle Number", controller: numController),
-
-                      SizedBox(height: 20.0),
-                    Consumer<ValueProvider>(
-                    builder: (context,provider,child){
-                      return provider.isLoading == false ? ButtonWidget(text: "Send Reply", onClicked: (){
-                        provider.setLoading(true);
-                        var id =  category[index]["id"].toString();
-                        firestore.collection("reply").doc(id).set({
-                          "message" :  comtroller.text.toString(),
-                          "name" :  nameController.text.toString(),
-                          "number" :  numController.text.toString(),
-                        }).whenComplete(() {
-                          firestore.collection("requests").doc(id).update({
-                            "status" : "complete"
-                          }).whenComplete(() {
-                            Provider.of<ValueProvider>(context,listen: false).setLoading(false);
-                            //  Get.snackbar("Message Deliver", "Message Send Successfully",backgroundColor: primaryColor,colorText: Colors.white);
-                            Get.back();
-                          });
-                        });
-                      }, width: 200.0, height: 50.0)
-                      : ButtonLoadingWidget(width: 200.0, height: 50.0);
-                    },
-                    )
-                    ],
-                  ),
-                ));
-              },
-              child: Icon(Icons.edit))
+              SizedBox(width: 10.0,),
+              InkWell(
+                  onTap: (){
+                    firestore.collection("requests")
+                        .doc(category[index]["id"]).delete();
+                  },
+                  child: Icon(Icons.delete,color: Colors.red,)),
+            ],
+          )
         ),
 
       ],

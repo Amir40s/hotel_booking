@@ -18,8 +18,14 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
+      validator: (value){
+       if(value!.isEmpty){
+         return "Field is Required";
+       }
+       return null;
+      },
       cursorColor: primaryColor,
       enableSuggestions: true,
       decoration: InputDecoration(
@@ -38,9 +44,6 @@ class CustomTextField extends StatelessWidget {
         ),
 
       ),
-      onSubmitted: (String value) {
-        debugPrint(value);
-      },
     );
   }
 }
