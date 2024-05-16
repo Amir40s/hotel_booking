@@ -12,14 +12,14 @@ import '../helper/text_widget.dart';
 import '../provider/value_provider.dart';
 import '../utils/notification_widget.dart';
 
-class AdminDashboardScreen extends StatefulWidget {
-  AdminDashboardScreen({super.key});
+class AdminDashboardCompleteScreen extends StatefulWidget {
+  AdminDashboardCompleteScreen({super.key});
 
   @override
-  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+  State<AdminDashboardCompleteScreen> createState() => _AdminDashboardCompleteScreenState();
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+class _AdminDashboardCompleteScreenState extends State<AdminDashboardCompleteScreen> {
   String? _token;
   Stream<String>? _tokenStream;
 
@@ -49,7 +49,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 .collection("requests")
                // .where("code", isEqualTo: "1")
               //  .orderBy('timestamp', descending: true)
-            .where("code", isEqualTo: "1")
+            .where("code", isEqualTo: "3")
                 .snapshots(),
             builder: (context, snapshot) {
               return (snapshot.connectionState == ConnectionState.waiting)
@@ -80,7 +80,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 child: PaginatedDataTable(
                     header: TextWidget(
                       text:
-                      "Total New Requests: ${snapshot.data!.docs.length}",
+                      "Total Complete Requests: ${snapshot.data!.docs.length}",
                       size: 20,
                       color: Colors.black,
                       isBold: true,
@@ -412,8 +412,7 @@ class DataTableSourceImpl extends DataTableSource {
                                           .collection("requests")
                                           .doc(id)
                                           .update({
-                                        "status": "complete",
-                                        "code" : "3"
+                                        "status": "complete"
                                       }).whenComplete(() {
                                         Provider.of<ValueProvider>(context,
                                             listen: false)
@@ -448,17 +447,9 @@ class DataTableSourceImpl extends DataTableSource {
                   color: Colors.red,
                 )
             ),
-            InkWell(
-                onTap: () {
-                  firestore.collection("requests")
-                      .doc(category[index]["id"]).update({
-                    "code" : "2"
-                  });
-                },
-                child: Icon(
-                  Icons.remove_red_eye,
-                  color: Colors.green,
-                )
+
+            SizedBox(
+              width: 10.0,
             ),
           ],
         )),

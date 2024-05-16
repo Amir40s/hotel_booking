@@ -15,6 +15,9 @@ import 'package:http/http.dart' as http;
 
 class DataProvider extends ChangeNotifier{
 
+  int _newMessage = 0;
+  int _pendingMessage = 0;
+
 
   String _username = "";
   String _password = "";
@@ -31,6 +34,8 @@ class DataProvider extends ChangeNotifier{
   get number  => _vehicleNumber;
   get date  => _date;
   get time  => _time;
+  get newMessage  => _newMessage;
+  get pendingMessage  => _pendingMessage;
 
 
   Future<void> uploadCustomerData({required context, required name,
@@ -42,7 +47,7 @@ class DataProvider extends ChangeNotifier{
     DateTime time = DateTime.now();
     DateTime date = DateTime.now();
     String dateFormat = DateFormat('dd-MMM-yyyy').format(date);
-    String formattedTime = DateFormat('kk-mm a').format(time);
+    String formattedTime = DateFormat('h:mm a').format(time);
     print(dateFormat);
     var id = firestore.collection("requests").doc().id.toString();
     try {
@@ -54,6 +59,7 @@ class DataProvider extends ChangeNotifier{
         key_driverNote : driverNote,
         key_bookStatus : bookStatus,
         "room" : room,
+        "code" : "1",
         "bookDate" : bookDate,
         "bookTime" : bookTime,
         "carType" : carType,
@@ -166,6 +172,35 @@ class DataProvider extends ChangeNotifier{
     }
    }
 
+
+
+  Future<void> fetchCountValue() async {
+    try {
+       await firestore.collection("requests")
+          .where("code", isEqualTo: "1").get().then((value) {
+            _newMessage = value.size;
+      });
+
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching count value: $e");
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchCountValue2() async {
+    try {
+      await firestore.collection("requests")
+          .where("code", isEqualTo: "2").get().then((value) {
+        _pendingMessage = value.size;
+      });
+
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching count value: $e");
+    }
+    notifyListeners();
+  }
 
 
 }

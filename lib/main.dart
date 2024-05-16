@@ -1,16 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotelbooking/admin/admin_dashbaord_screen.dart';
-import 'package:hotelbooking/admin/login_screen.dart';
+import 'package:hotelbooking/admin/home_screen/main_screen.dart';
 import 'package:hotelbooking/constants.dart';
 import 'package:hotelbooking/provider/data_provider.dart';
 import 'package:hotelbooking/provider/value_provider.dart';
-import 'package:hotelbooking/start_screen.dart';
 import 'package:hotelbooking/user/user_form_screen.dart';
 import 'package:hotelbooking/user/user_waiting_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'admin/controller/MenuAppController.dart';
+import 'admin/provider/text_color_provider.dart';
 import 'firebase_options.dart';
 
 void main() async{
@@ -29,6 +29,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => DataProvider()),
         ChangeNotifierProvider(create: (_) => ValueProvider()),
+        ChangeNotifierProvider(create: (_) => TextColorProvider()),
+        ChangeNotifierProvider(create: (_) => MenuAppController()),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
@@ -37,9 +39,9 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
           useMaterial3: true,
         ),
-        // home:  UserWaitingScreen(id: "2iZGLyikaDn0AzQB8irN",),
+        // home:  UserWaitingScreen(id: "M8vHYgam3S2ZPjoWn7Xf",),
         home:  UserFormScreen(),
-        // home:  AdminDashboardScreen(),
+        // home:  MainScreen(),
       ),
     );
   }

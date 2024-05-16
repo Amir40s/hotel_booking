@@ -32,7 +32,6 @@ class _UserFormScreenState extends State<UserFormScreen> {
 
   var dropOffController =  TextEditingController();
 
-  var carTypeController =  TextEditingController();
 
   var driverNoteController =  TextEditingController();
 
@@ -59,6 +58,14 @@ class _UserFormScreenState extends State<UserFormScreen> {
    _tokenStream!.listen(setToken);
 
    }
+
+
+  var  carType = ['Choose Car Type','Sedan (1-4 passengers)','MAXI TAXI (1-11 passengers)','Station Vegan Maxi (1-5 passengers)'];
+   String? selectedCarType;
+
+  _UserFormScreenState(){
+     selectedCarType = carType[0];
+  }
 
 
 
@@ -121,7 +128,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                      SizedBox(height: 20.0,),
                                      TextWidget(text: "Name", color: Colors.black, size: 14.0, isBold: true),
                                      SizedBox(height: 10.0,),
-                                     CustomTextField(hintText: "Enter Name", controller: nameController),
+                                     CustomTextFormField(hintText: "Enter Name", controller: nameController),
 
                                      SizedBox(height: 20.0,),
                                      TextWidget(text: "Phone Number (Optional)", color: Colors.black, size: 14.0, isBold: true),
@@ -129,19 +136,19 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                      CustomTextField(hintText: "Phone Number (Optional)", controller: phoneController),
 
                                      SizedBox(height: 20.0,),
-                                     TextWidget(text: "Room", color: Colors.black, size: 14.0, isBold: true),
+                                     TextWidget(text: "Room No", color: Colors.black, size: 14.0, isBold: true),
                                      SizedBox(height: 10.0,),
-                                     CustomTextField(hintText: "Room", controller: roomController),
+                                     CustomTextFormField(hintText: "Room No", controller: roomController),
 
                                      SizedBox(height: 20.0,),
                                      TextWidget(text: "Pick Up Location", color: Colors.black, size: 14.0, isBold: true),
                                      SizedBox(height: 10.0,),
-                                     CustomTextField(hintText: "Pick Up Location", controller: pickUpController),
+                                     CustomTextFormField(hintText: "Pick Up Location", controller: pickUpController),
 
                                      SizedBox(height: 20.0,),
                                      TextWidget(text: "Drop Off Location", color: Colors.black, size: 14.0, isBold: true),
                                      SizedBox(height: 10.0,),
-                                     CustomTextField(hintText: "Drop Off Location", controller: dropOffController),
+                                     CustomTextFormField(hintText: "Drop Off Location", controller: dropOffController),
 
                                      SizedBox(height: 20.0,),
                                      Consumer<ValueProvider>(
@@ -185,7 +192,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                                          ),
                                                          // child: TextWidget(text: "Pickup Date", color: Colors.black, size: 14.0, isBold: true)),
                                                          SizedBox(height: 10.0,),
-                                                         CustomTextField(
+                                                         CustomTextFormField(
                                                              isPostFix: true,
                                                              press: (){
                                                                _selectDate(context);
@@ -212,7 +219,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                                          ),
                                                          // child: TextWidget(text: "Pickup Time", color: Colors.black, size: 14.0, isBold: true)),
                                                          SizedBox(height: 10.0,),
-                                                         CustomTextField(
+                                                         CustomTextFormField(
                                                              isPostFix: true,
                                                              press: (){
                                                                _openTimePicker(context);
@@ -239,36 +246,79 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                      SizedBox(height: 20.0,),
                                      TextWidget(text: "Car type", color: Colors.black, size: 14.0, isBold: true),
                                      SizedBox(height: 10.0,),
-                                     CustomTextField(hintText: "Car type", controller: carTypeController),
+                                     Container(
+                                       decoration: BoxDecoration(
+                                           border: Border.all(width: 1, color: primaryColor),
+                                           borderRadius: BorderRadius.circular(5)),
+                                       child: Padding(
+                                         padding: const EdgeInsets.only(
+                                             left: 10.0, right: 5.0, top: 5.0, bottom: 5.0),
+                                         child: DropdownButtonFormField(
+                                           value: selectedCarType,
+                                           items: carType
+                                               .map((e) => DropdownMenuItem(
+                                             child: TextWidget(
+                                               text: e,
+                                               color: Colors.black,
+                                               size: 12.0,
+                                               isBold: false,
+                                             ),
+                                             value: e,
+                                           ))
+                                               .toList(),
+                                           onChanged: (value) {
+                                             setState(() {
+                                               selectedCarType = value as String;
+                                             });
+                                             // selectedGroup = value as String;
+                                           },
+                                           icon: const Icon(
+                                             Icons.arrow_drop_down_circle,
+                                             color: hoverColor,
+                                           ),
+                                           dropdownColor: Colors.white,
+                                           decoration: const InputDecoration(border: InputBorder.none),
+                                         ),
+                                       ),
+                                     ),
+
+
 
                                      SizedBox(height: 20.0,),
                                      TextWidget(text: "Note for driver", color: Colors.black, size: 14.0, isBold: true),
                                      SizedBox(height: 10.0,),
-                                     CustomTextField(hintText: "Note for driver", controller: driverNoteController),
+                                     CustomTextFormField(hintText: "Note for driver", controller: driverNoteController),
 
 
                                      SizedBox(height: 20.0,),
                                      Consumer<ValueProvider>(
                                        builder: (context,provider,child){
-                                         notificationFunctions();
+                                      //   notificationFunctions();
                                          return provider.isLoading == false ? ButtonWidget(text: "Submit Request", onClicked: (){
                                           if(_key.currentState!.validate()){
 
-                                            provider.setLoading(true);
-                                            Provider.of<DataProvider>(context,listen: false).uploadCustomerData(
-                                                context: context,
-                                                name: nameController.text.toString(),
-                                                room: roomController.text.toString(),
-                                                phone: phoneController.text.toString(),
-                                                pickup: pickUpController.text.toString(),
-                                                dropOff: dropOffController.text.toString(),
-                                                bookStatus: provider.selectRadioValue == 0 ? "Book For Now" : "Book For Later",
-                                                bookDate: dateController.text.toString(),
-                                                bookTime: timeController.text.toString(),
-                                                carType: carTypeController.text.toString(),
-                                                driverNote: driverNoteController.text.toString(),
-                                              token: _token.toString()
-                                            );
+                                            if(selectedCarType == "Choose Car Type"){
+                                              Get.snackbar("Cart Type Required", "Please Choose Car Type");
+                                              return;
+                                            }else{
+                                              provider.setLoading(true);
+                                              Provider.of<DataProvider>(context,listen: false).uploadCustomerData(
+                                                  context: context,
+                                                  name: nameController.text.toString(),
+                                                  room: roomController.text.toString(),
+                                                  phone: phoneController.text.toString(),
+                                                  pickup: pickUpController.text.toString(),
+                                                  dropOff: dropOffController.text.toString(),
+                                                  bookStatus: provider.selectRadioValue == 0 ? "Book For Now" : "Book For Later",
+                                                  bookDate: dateController.text.toString(),
+                                                  bookTime: timeController.text.toString(),
+                                                  carType: selectedCarType.toString(),
+                                                  driverNote: driverNoteController.text.toString(),
+                                                  token: _token.toString()
+                                              );
+                                            }
+
+
                                           }
 
                                            // Utils().sendMail(customerName: "name", phoneNumber: "phone", context: context

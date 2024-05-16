@@ -13,6 +13,8 @@ const defaultDrawerHeadHeight = 20.0;
 
 
 var appPassword = "zwdc oglc ghzq yiri";
+const DASHBOARD_SVG = "assets/icons/menu_dashboard.svg";
+
 
 //firebase firestore
 var firestore = FirebaseFirestore.instance;

@@ -38,10 +38,10 @@ class LoginScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       SizedBox(height: 20.0,),
-                      CustomTextField(hintText: "Username", controller: usernameController),
+                      CustomTextFormField(hintText: "Username", controller: usernameController),
 
                       SizedBox(height: 20.0,),
-                      CustomTextField(hintText: "Password", controller: passwordController),
+                      CustomTextFormField(hintText: "Password", controller: passwordController),
 
 
                       SizedBox(height: 20.0,),

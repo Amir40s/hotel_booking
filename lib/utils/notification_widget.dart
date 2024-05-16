@@ -15,7 +15,7 @@ class _NotificationDialogWidgetState extends State<NotificationDialogWidget> {
       title: Text(widget.title.toString()),
       actions: [
         OutlinedButton.icon(onPressed: (){
-        Get.back();
+        Navigator.of(context).pop();
         }, label: Text("Close"),
         icon: Icon(Icons.close),
         ),

@@ -7,17 +7,21 @@ class TextWidget extends StatelessWidget {
   final double size;
   final bool isBold;
 
-  const TextWidget({
+  TextAlign align;
+
+   TextWidget({
     required this.text,
     required this.color,
     required this.size,
     required this.isBold,
+    this.align = TextAlign.left
   });
 
   @override
   Widget build(BuildContext context) {
     return SelectableText(
       text,
+      textAlign: align,
       style: TextStyle(
         color: color,
         fontSize:  size,

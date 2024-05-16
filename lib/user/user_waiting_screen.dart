@@ -1,8 +1,11 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotelbooking/constants.dart';
+import 'package:hotelbooking/helper/button_widget.dart';
 import 'package:hotelbooking/helper/text_widget.dart';
 import 'package:hotelbooking/provider/data_provider.dart';
+import 'package:hotelbooking/responsive.dart';
 import 'package:hotelbooking/utils/custom_progress_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +52,7 @@ class UserWaitingScreen extends StatelessWidget {
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      crossAxisAlignment: CrossAxisAlignment.center,
                      children: [
-                       Text(provider.name.toString(),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16.0),),
+                       Text("Driver Name: \n${provider.name.toString()}",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 20.0),),
                        Column(
                          mainAxisAlignment: MainAxisAlignment.center,
                          crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,35 +80,62 @@ class UserWaitingScreen extends StatelessWidget {
                                  ]
                                ),
                                child: Text(provider.number.toString())),
+                           Padding(
+                             padding: const EdgeInsets.all(5.0),
+                             child: TextWidget(text: "Taxi No", color: primaryColor, size: 16.0, isBold: true),
+                           )
                          ],
                        )
                      ],
                    ),
                    SizedBox(height: 10.0,),
-                   Text("Booked: ${provider.time} & ${provider.date.toString()}"),
+                   Text("Booked Date: ${provider.date.toString()}"),
                    SizedBox(height: 10.0,),
-                   Text(provider.message.toString()),
+                   Text("Booked Time: ${provider.time}"),
+                   SizedBox(height: 10.0,),
+                   Text(provider.message !=null || provider.message == "" ? provider.message : "please wait your request is in que"),
                    SizedBox(height: 20.0,),
                    CustomProgressBar(width: Get.width, height: 20, progress: 90),
+                   SizedBox(height: 10.0,),
+                   TextWidget(text: "Est Arrival Time", color: Colors.black, size: 15.0, isBold: false),
                    SizedBox(height: 20.0,),
 
-                   InkWell(
-                       onTap: (){
-                        provider.fetchMessage(id: id);
-                       },
-                       child: Text("Refresh")),
+
+                   ButtonWidget(text: "Refresh", onClicked: (){
+                     provider.fetchMessage(id: id);
+                   }, width: Responsive.isMobile(context) ? 100.0 : Get.width * 0.090, height: 40.0)
                  ],
                ),
              );
            },
           ),
-          
-          
-          
 
-          Image.asset("assets/images/image.webp",width: 400.0,height: 300.0,),
+          SizedBox(height: 30.0,),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(child:
+            DefaultTextStyle(
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 22.0,
+                color: primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+              child: AnimatedTextKit(
+                repeatForever: true,
+                animatedTexts: [
+                  ScaleAnimatedText('Please wait few minutes for booking approval'),
+                ],
+                onTap: () {
+                  print("Tap Event");
+                },
+              ),
+            )
+            ),
+          ),
 
-          Center(child: TextWidget(text: "Please wait few minutes for booking approval", color: primaryColor, size: 18.0, isBold: false))
+
+
 
         ],
       ),
