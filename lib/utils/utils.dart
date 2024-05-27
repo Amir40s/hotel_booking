@@ -24,15 +24,15 @@ class Utils{
   }) async {
     // change your email here
     print("Enter Functon");
-    String username = 'hotelbooking740@gmail.com';
+    String username = 'forpartum@gmail.com';
     // change your password here
-    String password = "zwdc oglc ghzq yiri";
+    String password = "vyad laja bipe bctp";
     final smtpServer = gmail(username, password);
     final message = Message()
       ..from = Address(username, 'Hotel Booking')
       ..recipients.add('rehmanamjid1@gmail.com')
       ..subject = 'New Customer Booking Request'
-      ..text = "Y0yrh sh sh sh sh";
+      ..text = "text";
 
     try {
       // final sendReport = await send(message, smtpServer);
@@ -40,7 +40,7 @@ class Utils{
      await send(message, smtpServer);
       print("run try");
       Get.snackbar("Email Send", "Email sent successfully");
-      // if(!context.mounted) return;
+      if(!context.mounted) return;
       // Provider.of<ValueProvider>(context,listen: false).setLoading(false);
     } on MailerException catch (e)  {
       if (kDebugMode) {

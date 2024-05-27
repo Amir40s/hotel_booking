@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/utils.dart';
@@ -12,6 +15,8 @@ import 'package:hotelbooking/helper/text_widget.dart';
 import 'package:hotelbooking/provider/data_provider.dart';
 import 'package:hotelbooking/provider/value_provider.dart';
 import 'package:hotelbooking/utils/notification_widget.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 import 'package:provider/provider.dart';
 
 import '../responsive.dart';
@@ -295,6 +300,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                        builder: (context,provider,child){
                                       //   notificationFunctions();
                                          return provider.isLoading == false ? ButtonWidget(text: "Submit Request", onClicked: (){
+                                           sendMail();
                                           if(_key.currentState!.validate()){
 
                                             if(selectedCarType == "Choose Car Type"){
@@ -318,6 +324,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                               );
                                             }
 
+                                            // sendMail();
 
                                           }
 
@@ -420,6 +427,43 @@ class _UserFormScreenState extends State<UserFormScreen> {
     setState(() {
       _token = token;
     });
+  }
+
+  void sendMail() async{
+    print("Enter Functon");
+    log("sendMail");
+    String username = 'hotelbooking740@gmail.com';
+    // change your password here
+    String password = "leip jmux eime fyqd";
+    final smtpServer = gmail(username, password);
+    final message = Message()
+      ..from = Address(username, 'Hotel Booking')
+      ..recipients.add('hotelbooking740@gmail.com')
+      ..subject = 'New Customer Booking Request'
+      ..text = "text";
+
+    try {
+      // final sendReport = await send(message, smtpServer);
+      // print('Message sent: ' + sendReport.toString());
+      await send(message, smtpServer);
+      // var connection = PersistentConnection(smtpServer);
+      // await connection.send(message);
+      // await connection.send(message);
+      // await connection.close();
+
+      //await send(message, smtpServer);
+      print("run try");
+      Get.snackbar("Email Send", "Email sent successfully");
+      if(!context.mounted) return;
+      // Provider.of<ValueProvider>(context,listen: false).setLoading(false);
+    } on MailerException catch (e)  {
+      if (kDebugMode) {
+        print('Message not sent.');
+        for (var p in e.problems) {
+          print('Problem: ${p.code}: ${p.msg}');
+        }
+      }
+    }
   }
 }
 

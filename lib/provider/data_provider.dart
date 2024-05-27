@@ -72,7 +72,7 @@ class DataProvider extends ChangeNotifier{
         key_date : "${time.day}/${time.month}/${time.year}",
       }).whenComplete(() {
         Provider.of<ValueProvider>(context,listen: false).setLoading(false);
-        sendPushNotificationToWeb(token);
+
         Utils().sendMail(customerName: name, phoneNumber: phone, context: context
         ,pickUp: pickup,
           dropOff: dropOff, bookStatus: bookStatus, carType: carType, driverNotes: driverNote,
@@ -141,36 +141,7 @@ class DataProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-   sendPushNotificationToWeb(token) async{
-    if(token ==  null){
-      print("Not Token Exits");
-      return;
-    }
 
-    try{
-      http.post(
-          Uri.parse("https://fcm.googleapis.com/fcm/send"),
-        headers: <String, String>{
-            "Content-Type": "application/json",
-            "Authorization": "key=AAAA5R5Zct0:APA91bF8x9cHeGDTrKJL7P9vY_q_BCFkJdsltM0Uf6DE3qOQsHFDQN6fszZNcEgpEzd1Dq481ldxugMngmLCM4fCBhBXyf46svV2Yb3D6W6ERFynGvooyx47642MmOMvNIVMFRmO5rh2"
-        },
-        body: json.encode(
-            {
-          "to" : token,
-              "message" : {
-                "token" : token
-              },
-              "notification" :{
-                "title" : "New Message",
-                "body" : "New Message"
-              }
-          }
-        ),
-      );
-    }catch(error){
-      print(error.toString());
-    }
-   }
 
 
 
